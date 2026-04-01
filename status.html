@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Status | RGSMT Hosting</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #09090e;
+            --bg-card: #15151e;
+            --primary: #8a2be2;
+            --secondary: #4a00e0;
+            --accent: #00f2fe;
+            --success: #00ff88;
+            --danger: #ff3366;
+            --warning: #ffcc00;
+            --text-main: #ffffff;
+            --text-muted: #a0a0b5;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        h1, h2, h3, .logo {
+            font-family: 'Rajdhani', sans-serif;
+            text-transform: uppercase;
+        }
+
+        /* --- Updated Nav Bar (GFX Fix) --- */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 5%;
+            background: rgba(9, 9, 14, 0.95);
+            backdrop-filter: blur(20px);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 9999; /* Isko sabse upar rakha hai */
+            border-bottom: 2px solid rgba(138, 43, 226, 0.3);
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.8);
+        }
+
+        .logo {
+            font-size: 26px;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-links a {
+            color: var(--text-main);
+            text-decoration: none;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 8px 15px;
+            border-radius: 5px;
+            border: 1px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent);
+            background: rgba(0, 242, 254, 0.1);
+            border-color: var(--accent);
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.3);
+        }
+
+        .nav-links a.active {
+            color: white;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-color: var(--accent);
+            box-shadow: 0 0 20px rgba(138, 43, 226, 0.5);
+        }
+
+        /* --- Content Layout --- */
+        .page-header {
+            padding: 140px 20px 50px;
+            text-align: center;
+            background: radial-gradient(circle at top, rgba(138, 43, 226, 0.15) 0%, var(--bg-dark) 70%);
+        }
+
+        .page-header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 0 0 15px rgba(138, 43, 226, 0.5);
+        }
+
+        .overall-status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            background: rgba(21, 21, 30, 0.8);
+            border: 1px solid var(--success);
+            width: fit-content;
+            margin: 0 auto 40px;
+            padding: 12px 25px;
+            border-radius: 50px;
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.2);
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--success);
+            box-shadow: 0 0 10px var(--success);
+        }
+
+        .status-container {
+            padding: 0 5%;
+            max-width: 900px;
+            margin: 0 auto 80px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .status-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: 0.3s;
+        }
+
+        .status-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+        }
+
+        .info-group {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .server-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .live-players {
+            background: rgba(138, 43, 226, 0.2);
+            padding: 5px 12px;
+            border-radius: 4px;
+            font-weight: 700;
+            color: var(--accent);
+            display: none;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-muted);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Mobile Fix */
+        @media (max-width: 600px) {
+            nav { padding: 15px 3%; }
+            .logo { font-size: 20px; }
+            .nav-links a { padding: 6px 10px; font-size: 0.85rem; }
+            .status-card { flex-direction: column; text-align: center; gap: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="index.html" class="logo">RGSMT Hosting</a>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="index.html#pricing">Plans</a>
+            <a href="page2.html">Features</a>
+            <a href="status.html" class="active">Status</a>
+        </div>
+    </nav>
+
+    <header class="page-header">
+        <h1>Network Status</h1>
+        <p>Live monitoring of RGSMT core systems.</p>
+    </header>
+
+    <div class="overall-status">
+        <div class="status-dot"></div>
+        <h2 style="font-size: 1rem; color: var(--success);">Systems Operational</h2>
+    </div>
+
+    <section class="status-container">
+        <div class="status-card">
+            <div class="info-group">
+                <h3>Pterodactyl Panel</h3>
+            </div>
+            <div style="color: var(--success); font-weight: 700;">ONLINE</div>
+        </div>
+
+        <div class="status-card" style="border-left: 4px solid var(--accent);">
+            <div class="info-group">
+                <img id="server-icon" class="server-icon" src="">
+                <div>
+                    <h3>play.rgsmt.fun</h3>
+                    <p id="server-version" style="font-size: 0.8rem; color: var(--text-muted);">Java Edition</p>
+                </div>
+            </div>
+            <div id="mc-players" class="live-players">0 / 0</div>
+            <div id="mc-text" style="font-weight: 700; color: var(--warning);">FETCHING...</div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 RGSMT Hosting</p>
+    </footer>
+
+    <script>
+        async function fetchStatus() {
+            const mcText = document.getElementById('mc-text');
+            const mcPlayers = document.getElementById('mc-players');
+            const serverIcon = document.getElementById('server-icon');
+            const serverVersion = document.getElementById('server-version');
+            
+            try {
+                const res = await fetch(`https://api.mcsrvstat.us/3/play.rgsmt.fun`);
+                const data = await res.json();
+
+                if (data.online) {
+                    mcText.innerText = 'ONLINE';
+                    mcText.style.color = '#00ff88';
+                    mcPlayers.style.display = 'block';
+                    mcPlayers.innerText = `${data.players.online} / ${data.players.max}`;
+                    if(data.icon) { serverIcon.src = data.icon; serverIcon.style.display = 'block'; }
+                    if(data.version) { serverVersion.innerText = `Java Edition | ${data.version}`; }
+                } else {
+                    mcText.innerText = 'OFFLINE';
+                    mcText.style.color = '#ff3366';
+                }
+            } catch (e) {
+                mcText.innerText = 'ERROR';
+            }
+        }
+        fetchStatus();
+        setInterval(fetchStatus, 60000);
+    </script>
+</body>
+</html>
