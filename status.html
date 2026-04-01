@@ -209,7 +209,7 @@
 
     <header class="page-header">
         <h1>Network Status</h1>
-        <p>Live monitoring of RGSMT core systems.</p>
+        <p>Live monitoring of RGSMT Hosting Systems.</p>
     </header>
 
     <div class="overall-status">
@@ -250,7 +250,7 @@
             const serverVersion = document.getElementById('server-version');
             
             try {
-                const res = await fetch(`https://api.mcsrvstat.us/3/play.rgsmt.fun`);
+                const res = await fetch(`https://api.mcsrvstat.us/3/play.rgsmt.fun:19132`);
                 const data = await res.json();
 
                 if (data.online) {
