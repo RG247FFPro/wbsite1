@@ -36,41 +36,71 @@
             text-transform: uppercase;
         }
 
-        /* --- Navbar --- */
+        /* --- Updated Nav Bar (GFX Look) --- */
         nav {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 5%;
-            background: rgba(9, 9, 14, 0.9);
-            backdrop-filter: blur(10px);
+            padding: 15px 5%;
+            background: rgba(9, 9, 14, 0.95);
+            backdrop-filter: blur(20px);
             position: fixed;
             width: 100%;
             top: 0;
-            z-index: 100;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            z-index: 9999;
+            border-bottom: 2px solid rgba(138, 43, 226, 0.3);
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.8);
         }
 
         .logo {
-            font-size: 28px;
+            font-size: 26px;
             font-weight: 700;
             background: linear-gradient(to right, var(--primary), var(--accent));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
             text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 10px;
         }
 
         .nav-links a {
             color: var(--text-main);
             text-decoration: none;
-            margin-left: 30px;
-            font-weight: 500;
-            transition: color 0.3s ease;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 8px 15px;
+            border-radius: 5px;
+            border: 1px solid transparent;
+            transition: all 0.3s ease;
         }
 
         .nav-links a:hover {
             color: var(--accent);
+            background: rgba(0, 242, 254, 0.1);
+            border-color: var(--accent);
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.3);
+        }
+
+        /* Active Page Glow */
+        .nav-links a.active {
+            color: white;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-color: var(--accent);
+            box-shadow: 0 0 20px rgba(138, 43, 226, 0.5);
+        }
+
+        /* Mobile View Fix */
+        @media (max-width: 600px) {
+            nav { padding: 15px 3%; }
+            .logo { font-size: 20px; }
+            .nav-links a { padding: 6px 10px; font-size: 0.85rem; }
         }
 
         /* --- Page Header --- */
@@ -225,7 +255,8 @@
         <div class="nav-links">
             <a href="index.html">Home</a>
             <a href="index.html#pricing">Plans</a>
-            <a href="#features">Features</a>
+            <a href="page2.html" class="active">Features</a>
+            <a href="status.html">Status</a>
         </div>
     </nav>
 
