@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>System Status | RGSMT Hosting</title>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
@@ -17,21 +17,62 @@
             --warning: #ffcc00;
             --text-main: #ffffff;
             --text-muted: #a0a0b5;
+            --discord: #5865F2; /* Discord Color Added */
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg-dark); color: var(--text-main); overflow-x: hidden; line-height: 1.6; }
+        /* STRICT BOX SIZING & OVERFLOW FIX FOR MOBILE */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        html, body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--bg-dark); 
+            color: var(--text-main); 
+            width: 100vw; 
+            max-width: 100%; 
+            overflow-x: hidden; 
+            line-height: 1.6; 
+        }
+        
         h1, h2, h3, .logo { font-family: 'Rajdhani', sans-serif; text-transform: uppercase; }
 
-        /* --- Nav Bar --- */
-        nav { display: flex; justify-content: space-between; align-items: center; padding: 15px 5%; background: rgba(9, 9, 14, 0.95); backdrop-filter: blur(20px); position: fixed; width: 100%; top: 0; z-index: 9999; border-bottom: 2px solid rgba(138, 43, 226, 0.3); box-shadow: 0 5px 25px rgba(0, 0, 0, 0.8); }
-        .logo { font-size: 26px; font-weight: 700; background: linear-gradient(to right, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 1px; text-decoration: none; }
-        .nav-links { display: flex; gap: 10px; }
-        .nav-links a { color: var(--text-main); text-decoration: none; font-family: 'Rajdhani', sans-serif; font-weight: 600; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; padding: 8px 15px; border-radius: 5px; border: 1px solid transparent; transition: all 0.3s ease; }
-        .nav-links a:hover { color: var(--accent); background: rgba(0, 242, 254, 0.1); border-color: var(--accent); box-shadow: 0 0 15px rgba(0, 242, 254, 0.3); }
-        .nav-links a.active { color: white; background: linear-gradient(90deg, var(--primary), var(--secondary)); border-color: var(--accent); box-shadow: 0 0 20px rgba(138, 43, 226, 0.5); }
+        /* --- Updated Nav Bar --- */
+        nav { 
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 15px 5%; background: rgba(9, 9, 14, 0.95); backdrop-filter: blur(20px); 
+            position: fixed; width: 100%; top: 0; z-index: 9999; 
+            border-bottom: 2px solid rgba(138, 43, 226, 0.3); box-shadow: 0 5px 25px rgba(0, 0, 0, 0.8); 
+        }
         
-        @media (max-width: 600px) { nav { padding: 15px 3%; } .logo { font-size: 20px; } .nav-links a { padding: 6px 10px; font-size: 0.85rem; } }
+        .logo { 
+            font-size: 26px; font-weight: 700; text-decoration: none; white-space: nowrap;
+            background: linear-gradient(to right, var(--primary), var(--accent)); 
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 1px; 
+        }
+        
+        .nav-links { display: flex; gap: 15px; align-items: center; }
+        
+        .nav-links a { 
+            color: var(--text-main); text-decoration: none; font-family: 'Rajdhani', sans-serif; 
+            font-weight: 600; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; 
+            padding: 8px 15px; border-radius: 5px; border: 1px solid transparent; transition: all 0.3s ease; 
+        }
+        
+        .nav-links a:hover { 
+            color: var(--accent); background: rgba(0, 242, 254, 0.1); 
+            border-color: var(--accent); box-shadow: 0 0 15px rgba(0, 242, 254, 0.3); 
+        }
+        
+        .nav-links a.active { 
+            color: white; background: linear-gradient(90deg, var(--primary), var(--secondary)); 
+            border-color: var(--accent); box-shadow: 0 0 20px rgba(138, 43, 226, 0.5); 
+        }
+
+        .nav-links a.discord-btn {
+            background: var(--discord); border-color: var(--discord); box-shadow: 0 0 15px rgba(88, 101, 242, 0.4);
+        }
+
+        .hamburger { display: none; flex-direction: column; cursor: pointer; gap: 5px; }
+        .hamburger span { width: 25px; height: 3px; background-color: var(--text-main); border-radius: 2px; transition: all 0.3s ease; }
 
         /* --- Layout --- */
         .page-header { padding: 140px 20px 50px; text-align: center; background: radial-gradient(circle at top, rgba(138, 43, 226, 0.15) 0%, var(--bg-dark) 70%); }
@@ -55,24 +96,44 @@
         
         footer { text-align: center; padding: 30px; color: var(--text-muted); border-top: 1px solid rgba(255, 255, 255, 0.05); }
 
-        @media (max-width: 768px) { .status-card { flex-direction: column; align-items: flex-start; } .meters { width: 100%; justify-content: flex-start; } }
+        /* --- MOBILE VIEW FIXES --- */
+        @media (max-width: 768px) { 
+            .hamburger { display: flex; }
+            nav { padding: 15px; }
+            .logo { font-size: 22px; }
+            .nav-links { 
+                position: absolute; top: 60px; right: -100%; flex-direction: column; 
+                background: rgba(15, 15, 25, 0.98); width: 100vw; text-align: center; padding: 20px 0; gap: 15px;
+                border-bottom: 2px solid var(--primary); box-shadow: 0 10px 20px rgba(0,0,0,0.8); transition: 0.4s ease-in-out;
+            }
+            .nav-links.active { right: 0; }
+            .nav-links a { width: 80%; margin: 0 auto; font-size: 1.1rem; }
+            
+            .page-header h1 { font-size: 2.2rem; }
+            .status-card { flex-direction: column; align-items: flex-start; } 
+            .meters { width: 100%; justify-content: flex-start; } 
+        }
     </style>
 </head>
 <body>
 
     <nav>
         <a href="index.html" class="logo">RGSMT Hosting</a>
+        <div class="hamburger">
+            <span></span><span></span><span></span>
+        </div>
         <div class="nav-links">
             <a href="index.html">Home</a>
-            <a href="index.html#pricing">Plans</a>
+            <a href="plans.html">Plans</a>
             <a href="page2.html">Features</a>
             <a href="status.html" class="active">Status</a>
+            <a href="https://discord.gg/wsydnfX7Dh" target="_blank" class="discord-btn">Join Discord</a>
         </div>
     </nav>
 
     <header class="page-header">
         <h1>Network Status</h1>
-        <p>Live monitoring of RGSMT HOSTING  Systems.</p>
+        <p>Live monitoring of RGSMT HOSTING Systems.</p>
     </header>
 
     <div class="overall-status">
@@ -114,7 +175,7 @@
             <div class="info-group">
                 <img id="server-icon" class="server-icon" src="">
                 <div>
-                    <h3>play.rgsmt.fun</h3>
+                    <h3>play.rgsmt.fun:19132</h3>
                     <p id="server-version" style="font-size: 0.8rem; color: var(--text-muted);">Java Edition</p>
                 </div>
             </div>
@@ -125,16 +186,19 @@
     </section>
 
     <footer>
-        <p>&copy; 2026 RGSMT Hosting</p>
+        <p>&copy; 2026 RGSMT Hosting. All rights reserved.</p>
     </footer>
 
     <script>
+        // Hamburger Menu Script
+        const hamburger = document.querySelector('.hamburger');
+        const navLinks = document.querySelector('.nav-links');
+        hamburger.addEventListener('click', () => { navLinks.classList.toggle('active'); });
+
         // 1. VPS CPU & RAM ANIMATION (GFX Trick)
         setInterval(() => {
             const randomCPU = Math.floor(Math.random() * (35 - 12 + 1)) + 12; // CPU: 12% se 35%
-            
-            // RAM FIX: Ab ye sirf 25% se 39% ke beech ghumega
-            const randomRAM = Math.floor(Math.random() * (39 - 25 + 1)) + 25; 
+            const randomRAM = Math.floor(Math.random() * (39 - 25 + 1)) + 25; // RAM: 25% se 39%
             
             document.getElementById('vps-cpu-bar').style.width = randomCPU + '%';
             document.getElementById('vps-cpu-txt').innerText = randomCPU + '%';
