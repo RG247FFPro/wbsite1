@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Plans | RGSMT Hosting</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #09090e; --bg-card: #15151e; --primary: #8a2be2;
+            --secondary: #4a00e0; --accent: #00f2fe; --text-main: #ffffff;
+            --text-muted: #a0a0b5; --discord: #5865F2; 
+        }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html, body {
+            font-family: 'Inter', sans-serif; background-color: var(--bg-dark);
+            color: var(--text-main); width: 100vw; max-width: 100%; overflow-x: hidden;
+        }
+
+        h1, h2, h3, .logo { font-family: 'Rajdhani', sans-serif; text-transform: uppercase; }
+
+        /* --- Nav Bar --- */
+        nav {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 5%; background: rgba(9, 9, 14, 0.95); backdrop-filter: blur(20px);
+            position: fixed; width: 100%; top: 0; z-index: 9999;
+            border-bottom: 2px solid rgba(138, 43, 226, 0.3); box-shadow: 0 5px 25px rgba(0, 0, 0, 0.8);
+        }
+
+        .logo {
+            font-size: 26px; font-weight: 700; text-decoration: none; white-space: nowrap;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 1px;
+        }
+
+        .nav-links { display: flex; gap: 15px; align-items: center; }
+
+        .nav-links a {
+            color: var(--text-main); text-decoration: none; font-family: 'Rajdhani', sans-serif;
+            font-weight: 600; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px;
+            padding: 8px 15px; border-radius: 5px; border: 1px solid transparent; transition: all 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent); background: rgba(0, 242, 254, 0.1);
+            border-color: var(--accent); box-shadow: 0 0 15px rgba(0, 242, 254, 0.3);
+        }
+
+        /* Active tag ab Plans par hai */
+        .nav-links a.active {
+            color: white; background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-color: var(--accent); box-shadow: 0 0 20px rgba(138, 43, 226, 0.5);
+        }
+
+        .nav-links a.discord-btn {
+            background: var(--discord); border-color: var(--discord); box-shadow: 0 0 15px rgba(88, 101, 242, 0.4);
+        }
+
+        .hamburger { display: none; flex-direction: column; cursor: pointer; gap: 5px; }
+        .hamburger span { width: 25px; height: 3px; background-color: var(--text-main); border-radius: 2px; transition: all 0.3s ease; }
+
+        /* --- Pricing Section Setup --- */
+        .pricing {
+            padding: 120px 5% 80px 5%; /* Top padding badha di taki nav bar ke neeche na dabe */
+            text-align: center;
+            min-height: 100vh;
+            background: radial-gradient(circle at top, rgba(138, 43, 226, 0.1) 0%, var(--bg-dark) 50%);
+        }
+
+        .section-title { font-size: 2.5rem; margin-bottom: 50px; }
+        .section-title span { color: var(--primary); }
+
+        .plans { display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; width: 100%; }
+
+        .card {
+            background: var(--bg-card); border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 15px; padding: 40px 30px; width: 100%; max-width: 320px;
+            transition: all 0.4s ease; position: relative; overflow: hidden;
+        }
+
+        .card::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent)); transform: scaleX(0);
+            transition: transform 0.4s ease; transform-origin: left;
+        }
+
+        .card:hover {
+            transform: translateY(-10px); border-color: rgba(138, 43, 226, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(138, 43, 226, 0.1);
+        }
+
+        .card:hover::before { transform: scaleX(1); }
+
+        .card h3 { font-size: 2rem; margin-bottom: 10px; }
+        .price { font-size: 2.5rem; font-weight: 700; margin-bottom: 20px; color: var(--accent); }
+        .price span { font-size: 1rem; color: var(--text-muted); font-weight: 400; }
+        
+        .features { list-style: none; margin-bottom: 30px; text-align: left; }
+        .features li { margin-bottom: 12px; color: var(--text-muted); display: flex; align-items: flex-start; gap: 10px; font-size: 0.95rem; }
+        .features li::before { content: '✓'; color: var(--primary); font-weight: bold; }
+
+        .btn {
+            padding: 15px 40px; font-size: 1.1rem; font-family: 'Rajdhani', sans-serif; font-weight: 700;
+            color: white; background: linear-gradient(45deg, var(--primary), var(--secondary)); border: none;
+            border-radius: 5px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;
+            box-shadow: 0 0 20px rgba(138, 43, 226, 0.4); transition: all 0.3s ease; text-decoration: none; display: inline-block;
+        }
+        .btn:hover { background: linear-gradient(45deg, var(--secondary), var(--accent)); box-shadow: 0 0 30px rgba(0, 242, 254, 0.6); }
+
+        footer { text-align: center; padding: 30px 15px; background: rgba(21, 21, 30, 0.8); border-top: 1px solid rgba(255, 255, 255, 0.05); color: var(--text-muted); }
+
+        @media (max-width: 768px) {
+            .hamburger { display: flex; }
+            nav { padding: 15px; }
+            .logo { font-size: 22px; }
+            .nav-links { 
+                position: absolute; top: 60px; right: -100%; flex-direction: column; 
+                background: rgba(15, 15, 25, 0.98); width: 100vw; text-align: center; padding: 20px 0; gap: 15px;
+                border-bottom: 2px solid var(--primary); box-shadow: 0 10px 20px rgba(0,0,0,0.8); transition: 0.4s ease-in-out;
+            }
+            .nav-links.active { right: 0; }
+            .nav-links a { width: 80%; margin: 0 auto; font-size: 1.1rem; }
+            .card { padding: 30px 20px; max-width: 100%; }
+            .section-title { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="index.html" class="logo">RGSMT Hosting</a>
+        <div class="hamburger">
+            <span></span><span></span><span></span>
+        </div>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="plans.html" class="active">Plans</a>
+            <a href="page2.html">Features</a>
+            <a href="status.html">Status</a>
+            <a href="https://discord.gg/AGpt62vMNz" target="_blank" class="discord-btn">Join Discord</a>
+        </div>
+    </nav>
+
+    <section class="pricing">
+        <h2 class="section-title">Choose Your <span>Power</span></h2>
+        <div class="plans">
+            
+            <div class="card">
+                <h3>Starter</h3>
+                <div class="price">₹40 <span>/mo</span></div>
+                <ul class="features">
+                    <li>3GB DDR4 RAM</li>
+                    <li>100% CPU Power</li>
+                    <li>10 NVMe Storage</li>
+                    <li>1 Backup Slot</li>
+                    <li>Basic DDoS Protection</li>
+                    <li>24/7 Ticket Support</li>
+                </ul>
+                <a href="https://discord.gg/AGpt62vMNz" target="_blank" class="btn" style="width: 100%; padding: 12px; display: block; box-sizing: border-box; text-align: center;">Deploy Now</a>
+            </div>
+            
+            <div class="card">
+                <h3>Iron Tier</h3>
+                <div class="price">₹119 <span>/mo</span></div>
+                <ul class="features">
+                    <li>6GB DDR4 RAM</li>
+                    <li>150% CPU Power</li>
+                    <li>15 NVMe Storage</li>
+                    <li>2 Backup Slot</li>
+                    <li>Basic DDoS Protection</li>
+                    <li>24/7 Ticket Support</li>
+                </ul>
+                <a href="https://discord.gg/AGpt62vMNz" target="_blank" class="btn" style="width: 100%; padding: 12px; display: block; box-sizing: border-box; text-align: center;">Deploy Now</a>
+            </div>
+          
+            <div class="card">
+                <h3>Gold Tier</h3>
+                <div class="price">₹199 <span>/mo</span></div>
+                <ul class="features">
+                    <li>8GB DDR4 RAM</li>
+                    <li>200% CPU Power</li>
+                    <li>20 NVMe Storage</li>
+                    <li>3 Backup Slot</li>
+                    <li>Basic DDoS Protection</li>
+                    <li>24/7 Ticket Support</li>
+                </ul>
+                <a href="https://discord.gg/AGpt62vMNz" target="_blank" class="btn" style="width: 100%; padding: 12px; display: block; box-sizing: border-box; text-align: center;">Deploy Now</a>
+            </div>
+
+            <div class="card">
+                <h3>Diamond Tier</h3>
+                <div class="price">₹289 <span>/mo</span></div>
+                <ul class="features">
+                    <li>12GB DDR4 RAM</li>
+                    <li>400% CPU Power</li>
+                    <li>25 NVMe Storage</li>
+                    <li>4 Backup Slot</li>
+                    <li>Basic DDoS Protection</li>
+                    <li>24/7 Ticket Support</li>
+                </ul>
+                <a href="https://discord.gg/AGpt62vMNz" target="_blank" class="btn" style="width: 100%; padding: 12px; display: block; box-sizing: border-box; text-align: center;">Deploy Now</a>
+            </div>
+
+            <div class="card">
+                <h3>Neather Tier</h3>
+                <div class="price">₹399 <span>/mo</span></div>
+                <ul class="features">
+                    <li>16GB DDR4 RAM</li>
+                    <li>500% CPU Power</li>
+                    <li>30 NVMe Storage</li>
+                    <li>5 Backup Slot</li>
+                    <li>Basic DDoS Protection</li>
+                    <li>24/7 Ticket Support</li>
+                </ul>
+                <a href="https://discord.gg/AGpt62vMNz" target="_blank" class="btn" style="width: 100%; padding: 12px; display: block; box-sizing: border-box; text-align: center;">Deploy Now</a>
+            </div>
+         
+            <div class="card">
+                <h3>Hacker</h3>
+                <div class="price">₹599 <span>/mo</span></div>
+                <ul class="features">
+                    <li>Unlimited RAM</li>
+                    <li>Unlimited CPU</li>
+                    <li>Unlimited Storage</li>
+                    <li>8 Backup Slot</li>
+                    <li>Basic DDoS Protection</li>
+                    <li>24/7 Ticket Support</li>
+                </ul>
+                <a href="https://discord.gg/AGpt62vMNz" target="_blank" class="btn" style="width: 100%; padding: 12px; display: block; box-sizing: border-box; text-align: center;">Deploy Now</a>
+            </div>
+       
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 RGSMT Hosting. All rights reserved.</p>
+    </footer>
+
+    <script>
+        const hamburger = document.querySelector('.hamburger');
+        const navLinks = document.querySelector('.nav-links');
+        hamburger.addEventListener('click', () => { navLinks.classList.toggle('active'); });
+    </script>
+</body>
+</html>
