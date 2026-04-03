@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Features & Policies | RGSMT Hosting</title>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
@@ -15,18 +15,22 @@
             --danger: #ff3366;
             --text-main: #ffffff;
             --text-muted: #a0a0b5;
+            --discord: #5865F2; /* Discord Color Added */
         }
 
-        * {
+        /* STRICT BOX SIZING & OVERFLOW FIX FOR MOBILE */
+        *, *::before, *::after {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        body {
+        html, body {
             font-family: 'Inter', sans-serif;
             background-color: var(--bg-dark);
             color: var(--text-main);
+            width: 100vw; 
+            max-width: 100%; 
             overflow-x: hidden;
             line-height: 1.6;
         }
@@ -60,11 +64,13 @@
             -webkit-text-fill-color: transparent;
             letter-spacing: 1px;
             text-decoration: none;
+            white-space: nowrap;
         }
 
         .nav-links {
             display: flex;
-            gap: 10px;
+            gap: 15px;
+            align-items: center;
         }
 
         .nav-links a {
@@ -96,12 +102,12 @@
             box-shadow: 0 0 20px rgba(138, 43, 226, 0.5);
         }
 
-        /* Mobile View Fix */
-        @media (max-width: 600px) {
-            nav { padding: 15px 3%; }
-            .logo { font-size: 20px; }
-            .nav-links a { padding: 6px 10px; font-size: 0.85rem; }
+        .nav-links a.discord-btn {
+            background: var(--discord); border-color: var(--discord); box-shadow: 0 0 15px rgba(88, 101, 242, 0.4);
         }
+
+        .hamburger { display: none; flex-direction: column; cursor: pointer; gap: 5px; }
+        .hamburger span { width: 25px; height: 3px; background-color: var(--text-main); border-radius: 2px; transition: all 0.3s ease; }
 
         /* --- Page Header --- */
         .page-header {
@@ -246,17 +252,41 @@
             border-top: 1px solid rgba(255, 255, 255, 0.05);
             color: var(--text-muted);
         }
+
+        /* --- MOBILE VIEW FIXES --- */
+        @media (max-width: 768px) {
+            .hamburger { display: flex; }
+            nav { padding: 15px; }
+            .logo { font-size: 22px; }
+            .nav-links { 
+                position: absolute; top: 60px; right: -100%; flex-direction: column; 
+                background: rgba(15, 15, 25, 0.98); width: 100vw; text-align: center; padding: 20px 0; gap: 15px;
+                border-bottom: 2px solid var(--primary); box-shadow: 0 10px 20px rgba(0,0,0,0.8); transition: 0.4s ease-in-out;
+            }
+            .nav-links.active { right: 0; }
+            .nav-links a { width: 80%; margin: 0 auto; font-size: 1.1rem; }
+            
+            .page-header { padding: 120px 20px 50px; }
+            .page-header h1 { font-size: 2.5rem; }
+            .section-title { font-size: 2rem; }
+            .policy-box { padding: 25px; }
+            .policy-box h3 { font-size: 1.5rem; }
+        }
     </style>
 </head>
 <body>
 
     <nav>
         <a href="index.html" class="logo">RGSMT Hosting</a>
+        <div class="hamburger">
+            <span></span><span></span><span></span>
+        </div>
         <div class="nav-links">
             <a href="index.html">Home</a>
-            <a href="index.html#pricing">Plans</a>
+            <a href="plans.html">Plans</a>
             <a href="page2.html" class="active">Features</a>
             <a href="status.html">Status</a>
+            <a href="https://discord.gg/wsydnfX7Dh" target="_blank" class="discord-btn">Join Discord</a>
         </div>
     </nav>
 
@@ -333,5 +363,10 @@
         <p>&copy; 2026 RGSMT Hosting. All rights reserved.</p>
     </footer>
 
+    <script>
+        const hamburger = document.querySelector('.hamburger');
+        const navLinks = document.querySelector('.nav-links');
+        hamburger.addEventListener('click', () => { navLinks.classList.toggle('active'); });
+    </script>
 </body>
 </html>
