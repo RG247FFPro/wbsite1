@@ -1,160 +1,674 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>RGSMT Hosting | Premium Minecraft Servers</title>
-    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-dark: #09090e; --bg-card: #15151e; --primary: #8a2be2;
-            --secondary: #4a00e0; --accent: #00f2fe; --text-main: #ffffff;
-            --text-muted: #a0a0b5; --discord: #5865F2; 
-        }
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VoiceShift — Real-Time Voice Changer</title>
+  <style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080810;--surface:#101018;--card:#16162200;--card-b:#1c1c2e;
+  --border:#252540;--accent:#7c6cff;--accent2:#b06cff;
+  --green:#3dffa0;--red:#ff4e6a;--yellow:#ffd76e;
+  --text:#e8e8f4;--muted:#5a5a7a;--glow:rgba(124,108,255,.3);
+}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:'Space Grotesk',sans-serif;
+  min-height:100vh;display:flex;flex-direction:column;
+  align-items:center;padding:36px 16px 80px;overflow-x:hidden;
+}
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 60% 50% at 10% 0%,rgba(124,108,255,.09) 0%,transparent 70%),
+    radial-gradient(ellipse 50% 40% at 90% 100%,rgba(176,108,255,.07) 0%,transparent 70%);
+}
+.wrap{position:relative;z-index:1;width:100%;max-width:520px}
 
-        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+/* ── Header ── */
+.hdr{text-align:center;margin-bottom:40px}
+.logo{display:inline-flex;align-items:center;gap:10px;margin-bottom:10px}
+.logo-icon{
+  width:46px;height:46px;border-radius:14px;font-size:22px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 24px var(--glow);
+}
+.logo-name{font-size:24px;font-weight:700;letter-spacing:-.5px}
+.logo-name b{color:var(--accent)}
+.tagline{font-size:13px;color:var(--muted);line-height:1.7}
 
-        html, body {
-            font-family: 'Inter', sans-serif; background-color: var(--bg-dark);
-            color: var(--text-main); width: 100vw; max-width: 100%; overflow-x: hidden;
-        }
+/* ── Steps ── */
+.steps{display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:32px}
+.step{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--muted);transition:color .3s;font-family:'Space Mono',monospace}
+.step.active{color:var(--accent)}
+.step.done{color:var(--green)}
+.snum{width:22px;height:22px;border-radius:50%;border:1.5px solid currentColor;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700}
+.sdiv{width:24px;height:1.5px;background:var(--border)}
 
-        h1, h2, h3, .logo { font-family: 'Rajdhani', sans-serif; text-transform: uppercase; }
+/* ── Card ── */
+.card{
+  background:var(--card-b);border:1.5px solid var(--border);
+  border-radius:18px;padding:22px;margin-bottom:14px;
+  transition:border-color .3s;
+}
+.card-lbl{font-size:10px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:var(--muted);margin-bottom:14px;display:flex;align-items:center;gap:6px}
+.card-lbl::before{content:'';width:4px;height:4px;border-radius:50%;background:var(--accent);display:inline-block}
 
-        nav {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 15px 5%; background: rgba(9, 9, 14, 0.95); backdrop-filter: blur(20px);
-            position: fixed; width: 100%; top: 0; z-index: 9999;
-            border-bottom: 2px solid rgba(138, 43, 226, 0.3); box-shadow: 0 5px 25px rgba(0, 0, 0, 0.8);
-        }
+/* ── Upload ── */
+.dropzone{
+  border:2px dashed var(--border);border-radius:12px;
+  padding:32px 16px;text-align:center;cursor:pointer;
+  transition:all .25s;
+}
+.dropzone:hover,.dropzone.drag{border-color:var(--accent);background:rgba(124,108,255,.05)}
+.dropzone.loaded{border-color:var(--green);border-style:solid;background:rgba(61,255,160,.04)}
+.dz-ico{font-size:34px;margin-bottom:8px}
+.dz-ttl{font-size:15px;font-weight:600;margin-bottom:3px}
+.dz-sub{font-size:12px;color:var(--muted)}
+#fileInput{display:none}
 
-        .logo {
-            font-size: 26px; font-weight: 700; text-decoration: none; white-space: nowrap;
-            background: linear-gradient(to right, var(--primary), var(--accent));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 1px;
-        }
+.finfo{display:none;align-items:center;gap:10px;background:var(--surface);border-radius:10px;padding:11px 14px;margin-top:12px}
+.finfo.show{display:flex}
+.fname{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:240px}
+.fmeta{font-size:11px;color:var(--muted);margin-top:2px}
+.frm{background:none;border:none;color:var(--red);cursor:pointer;font-size:17px;padding:4px 6px;border-radius:6px}
+.frm:hover{background:rgba(255,78,106,.1)}
 
-        .nav-links { display: flex; gap: 15px; align-items: center; }
+/* ── Sliders ── */
+.sl-row{display:flex;align-items:center;gap:10px;margin-top:12px}
+.sl-lbl{font-size:12px;color:var(--muted);min-width:76px}
+input[type=range]{-webkit-appearance:none;flex:1;height:3px;background:var(--border);border-radius:3px;outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--glow);cursor:pointer}
+.sl-val{font-family:'Space Mono',monospace;font-size:12px;color:var(--accent);min-width:42px;text-align:right}
 
-        .nav-links a {
-            color: var(--text-main); text-decoration: none; font-family: 'Rajdhani', sans-serif;
-            font-weight: 600; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px;
-            padding: 8px 15px; border-radius: 5px; border: 1px solid transparent; transition: all 0.3s ease;
-        }
+/* ── Grid Info ── */
+.info-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:16px}
+.ibox{background:var(--surface);border-radius:10px;padding:12px;text-align:center}
+.ibox-val{font-family:'Space Mono',monospace;font-size:16px;font-weight:700;color:var(--accent)}
+.ibox-lbl{font-size:10px;color:var(--muted);margin-top:3px;text-transform:uppercase;letter-spacing:.8px}
 
-        .nav-links a:hover {
-            color: var(--accent); background: rgba(0, 242, 254, 0.1);
-            border-color: var(--accent); box-shadow: 0 0 15px rgba(0, 242, 254, 0.3);
-        }
+/* ── Next Btn ── */
+.btn-next{
+  width:100%;padding:15px;border:none;border-radius:13px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:#fff;font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;
+  cursor:pointer;box-shadow:0 4px 24px var(--glow);transition:all .25s;
+  display:flex;align-items:center;justify-content:center;gap:8px;margin-top:6px;
+}
+.btn-next:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 32px var(--glow)}
+.btn-next:disabled{opacity:.35;cursor:not-allowed;transform:none}
 
-        .nav-links a.active {
-            color: white; background: linear-gradient(90deg, var(--primary), var(--secondary));
-            border-color: var(--accent); box-shadow: 0 0 20px rgba(138, 43, 226, 0.5);
-        }
+/* ── Live Section ── */
+#liveSection{display:none}
+#liveSection.show{display:block}
 
-        .nav-links a.discord-btn {
-            background: var(--discord); border-color: var(--discord); box-shadow: 0 0 15px rgba(88, 101, 242, 0.4);
-        }
+/* ── Mic Status Card ── */
+.mic-card{
+  display:flex;align-items:center;gap:12px;
+  background:var(--surface);border:1.5px solid var(--border);
+  border-radius:13px;padding:14px 16px;margin-bottom:12px;
+  transition:border-color .3s;
+}
+.mic-card.live{border-color:rgba(61,255,160,.4)}
+.mic-card.error-state{border-color:rgba(255,78,106,.4)}
+.mdot{width:11px;height:11px;border-radius:50%;background:var(--muted);flex-shrink:0;transition:background .3s}
+.mdot.live{background:var(--green);box-shadow:0 0 8px rgba(61,255,160,.7);animation:blink 1.2s ease infinite}
+.mdot.rec{background:var(--red);box-shadow:0 0 8px rgba(255,78,106,.7);animation:blink .6s ease infinite}
+.mdot.loading{background:var(--yellow);animation:blink .4s ease infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
+.mic-txt{font-size:14px;font-weight:600}
+.mic-sub{font-size:11px;color:var(--muted);margin-top:2px}
 
-        .hamburger { display: none; flex-direction: column; cursor: pointer; gap: 5px; }
-        .hamburger span { width: 25px; height: 3px; background-color: var(--text-main); border-radius: 2px; transition: all 0.3s ease; }
+/* ── Visualizer ── */
+.viz-wrap{background:var(--surface);border-radius:13px;padding:14px 12px;margin-bottom:12px;height:88px;display:flex;align-items:flex-end;gap:3px;overflow:hidden}
+.vbar{flex:1;border-radius:3px 3px 1px 1px;background:linear-gradient(to top,var(--accent),var(--accent2));min-height:3px;transition:height .07s ease}
 
-        .hero {
-            min-height: 100vh; display: flex; flex-direction: column; justify-content: center;
-            align-items: center; text-align: center; padding: 100px 20px 50px 20px;
-            position: relative; background: radial-gradient(circle at center, rgba(138, 43, 226, 0.15) 0%, var(--bg-dark) 70%);
-        }
+/* ── Control Buttons ── */
+.ctrl-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.cbtn{
+  padding:13px 10px;border-radius:11px;border:1.5px solid var(--border);
+  background:var(--surface);color:var(--text);
+  font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;
+  cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:6px;
+}
+.cbtn:hover{border-color:var(--accent);background:rgba(124,108,255,.08)}
+.cbtn.on{border-color:var(--green);background:rgba(61,255,160,.07);color:var(--green)}
+.cbtn.danger:hover{border-color:var(--red);background:rgba(255,78,106,.08);color:var(--red)}
 
-        .hero::before {
-            content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 80vw; height: 80vw; max-width: 600px; max-height: 600px; border-radius: 50%;
-            background: linear-gradient(45deg, var(--primary), var(--accent)); filter: blur(100px); opacity: 0.15; z-index: -1;
-        }
+/* ── Recording Output ── */
+.rec-out{background:var(--surface);border:1.5px solid var(--border);border-radius:13px;padding:14px;margin-top:4px;display:none}
+.rec-out.show{display:block}
+.rec-lbl{font-size:10px;color:var(--muted);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px}
+audio{width:100%;height:38px;border-radius:8px}
+.dl-btn{display:inline-flex;align-items:center;gap:6px;margin-top:10px;font-size:12px;font-weight:600;color:var(--accent);text-decoration:none;background:rgba(124,108,255,.1);border-radius:8px;padding:7px 12px;transition:background .2s}
+.dl-btn:hover{background:rgba(124,108,255,.2)}
 
-        .hero h1 { font-size: 4rem; margin-bottom: 20px; text-shadow: 0 0 20px rgba(138, 43, 226, 0.5); line-height: 1.1; }
-        .hero p { font-size: 1.2rem; color: var(--text-muted); max-width: 600px; margin-bottom: 40px; }
+/* ── Permission Banner ── */
+.perm-banner{
+  background:rgba(255,215,110,.08);border:1.5px solid rgba(255,215,110,.3);
+  border-radius:12px;padding:14px 16px;margin-bottom:12px;
+  font-size:13px;line-height:1.6;display:none;
+}
+.perm-banner.show{display:block}
+.perm-banner strong{color:var(--yellow)}
 
-        .btn {
-            padding: 15px 40px; font-size: 1.1rem; font-family: 'Rajdhani', sans-serif; font-weight: 700;
-            color: white; background: linear-gradient(45deg, var(--primary), var(--secondary)); border: none;
-            border-radius: 5px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;
-            box-shadow: 0 0 20px rgba(138, 43, 226, 0.4); transition: all 0.3s ease; text-decoration: none; display: inline-block;
-        }
+/* ── Toast ── */
+.toast{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);
+  background:var(--card-b);border:1.5px solid var(--border);
+  color:var(--text);padding:11px 18px;border-radius:11px;
+  font-size:13px;font-weight:500;z-index:999;
+  transition:transform .35s cubic-bezier(.34,1.56,.64,1),opacity .3s;
+  opacity:0;white-space:nowrap;box-shadow:0 8px 32px rgba(0,0,0,.6);
+}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.toast.ok{border-color:rgba(61,255,160,.4);color:var(--green)}
+.toast.err{border-color:rgba(255,78,106,.4);color:var(--red)}
+.toast.warn{border-color:rgba(255,215,110,.4);color:var(--yellow)}
 
-        .btn:hover {
-            transform: translateY(-3px); box-shadow: 0 0 30px rgba(0, 242, 254, 0.6);
-            background: linear-gradient(45deg, var(--secondary), var(--accent));
-        }
+@media(max-width:480px){
+  .info-grid{grid-template-columns:1fr 1fr}
+  .ctrl-grid{grid-template-columns:1fr 1fr}
+}
+</style>
+ </head>
+ <body>
+  <div class="wrap">
+   <!-- Header -->
+   <div class="hdr">
+    <div class="logo">
+     <div class="logo-icon">🎙</div>
+     <div class="logo-name">
+      Voice<b>Shift</b>
+     </div>
+    </div>
+    <p class="tagline">Kisi ka bhi voice upload karo · settings tune karo · live bolke unki awaaz mein sunao</p>
+   </div>
+   <!-- Steps -->
+   <div class="steps">
+    <div class="step active" id="s1">
+     <div class="snum">1</div>
+     <span>Upload</span>
+    </div>
+    <div class="sdiv"></div>
+    <div class="step" id="s2">
+     <div class="snum">2</div>
+     <span>Tune</span>
+    </div>
+    <div class="sdiv"></div>
+    <div class="step" id="s3">
+     <div class="snum">3</div>
+     <span>Live</span>
+    </div>
+   </div>
+   <!-- ── UPLOAD SECTION ── -->
+   <div id="uploadSec">
+    <div class="card">
+     <div class="card-lbl">Target Voice — File Upload</div>
+     <div class="dropzone" id="dz" onclick="document.getElementById('fileInput').click()">
+      <div class="dz-ico" id="dzIco">🎵</div>
+      <div class="dz-ttl" id="dzTtl">Yahan audio file drop karo</div>
+      <div class="dz-sub">MP3 · WAV · OGG · M4A · ya click karke browse karo</div>
+     </div>
+     <input type="file" id="fileInput" accept="audio/*">
+     <div class="finfo" id="finfo">
+      <div style="font-size:22px">🎧</div>
+      <div style="flex:1">
+       <div class="fname" id="fname">—</div>
+       <div class="fmeta" id="fmeta">—</div>
+      </div>
+      <button class="frm" id="frmBtn" title="Remove">✕</button>
+     </div>
+    </div>
+    <!-- Tune Card -->
+    <div class="card">
+     <div class="card-lbl">Voice Parameters</div>
+     <div class="sl-row">
+      <div class="sl-lbl">Pitch Shift</div>
+      <input type="range" id="slPitch" min="-12" max="12" step="0.5" value="0">
+      <div class="sl-val" id="vPitch">0 st</div>
+     </div>
+     <div class="sl-row">
+      <div class="sl-lbl">Speed / Rate</div>
+      <input type="range" id="slSpeed" min="0.5" max="2.0" step="0.05" value="1.0">
+      <div class="sl-val" id="vSpeed">1.0×</div>
+     </div>
+     <div class="sl-row">
+      <div class="sl-lbl">Effect Mix</div>
+      <input type="range" id="slMix" min="0" max="100" step="1" value="75">
+      <div class="sl-val" id="vMix">75%</div>
+     </div>
+     <div class="info-grid">
+      <div class="ibox">
+       <div class="ibox-val" id="iv1">0st</div>
+       <div class="ibox-lbl">Pitch</div>
+      </div>
+      <div class="ibox">
+       <div class="ibox-val" id="iv2">1.0×</div>
+       <div class="ibox-lbl">Rate</div>
+      </div>
+      <div class="ibox">
+       <div class="ibox-val" id="iv3">75%</div>
+       <div class="ibox-lbl">Mix</div>
+      </div>
+     </div>
+    </div>
+    <button class="btn-next" id="btnNext" disabled onclick="goLive()">▶&nbsp; Activate — Next</button>
+   </div>
+   <!-- /uploadSec -->
+   <!-- ── LIVE SECTION ── -->
+   <div id="liveSection">
+    <!-- Permission help -->
+    <div class="perm-banner" id="permBanner">
+     <strong>⚠️ Mic permission chahiye!</strong>
+     <br>
+     Browser ne mic block kiya hai. Address bar mein 🔒 icon click karo → Microphone → Allow, phir page reload karo.
+    </div>
+    <!-- Mic status -->
+    <div class="mic-card" id="micCard">
+     <div class="mdot" id="mdot"></div>
+     <div>
+      <div class="mic-txt" id="micTxt">Ready — Start Live dabao</div>
+      <div class="mic-sub" id="micSub">Mic permission automatically mangega</div>
+     </div>
+    </div>
+    <!-- Visualizer -->
+    <div class="viz-wrap" id="vizWrap"></div>
+    <!-- Controls -->
+    <div class="ctrl-grid">
+     <button class="cbtn" id="btnLive" onclick="toggleLive()">🎙 Start Live</button>
+     <button class="cbtn" id="btnRec" onclick="toggleRec()">⏺ Record</button>
+     <button class="cbtn danger" onclick="stopAll()">⏹ Stop All</button>
+     <button class="cbtn" onclick="goBack()">← New Voice</button>
+    </div>
+    <!-- Output -->
+    <div class="rec-out" id="recOut">
+     <div class="rec-lbl">🎧 Recorded Output</div>
+     <audio id="outAudio" controls></audio>
+     <a class="dl-btn" id="dlLink" href="#" download="voiceshift-recording.webm">⬇ Download Recording</a>
+    </div>
+   </div>
+   <!-- /liveSection -->
+  </div>
+  <!-- /wrap -->
+  <div class="toast" id="toast"></div>
+  <script>
+// ═══════════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════════
+let targetBuffer   = null;   // decoded AudioBuffer of uploaded file
+let audioCtx       = null;
+let micStream      = null;
+let analyserNode   = null;
+let processorNode  = null;
+let dryGainNode    = null;
+let wetGainNode    = null;
+let mediaRecorder  = null;
+let recChunks      = [];
+let isLive         = false;
+let isRec          = false;
+let animId         = null;
+let recObjectURL   = null;
 
-        .ip-banner {
-            background: rgba(21, 21, 30, 0.8); border: 1px solid rgba(138, 43, 226, 0.3); padding: 20px 40px;
-            border-radius: 10px; display: inline-flex; align-items: center; gap: 20px; margin-top: 50px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5); max-width: 100%; flex-wrap: wrap; justify-content: center;
-        }
+// ═══════════════════════════════════════════════════════
+//  VISUALIZER BARS
+// ═══════════════════════════════════════════════════════
+const VIZ_N = 40;
+const vizWrap = document.getElementById('vizWrap');
+const bars = [];
+for(let i=0;i<VIZ_N;i++){
+  const b=document.createElement('div');
+  b.className='vbar';
+  vizWrap.appendChild(b);
+  bars.push(b);
+}
 
-        .ip-address {
-            font-family: monospace; font-size: 1.2rem; color: var(--accent); background: rgba(0, 0, 0, 0.5);
-            padding: 8px 15px; border-radius: 5px; word-break: break-all;
-        }
+// ═══════════════════════════════════════════════════════
+//  SLIDER SYNC
+// ═══════════════════════════════════════════════════════
+const slPitch = document.getElementById('slPitch');
+const slSpeed = document.getElementById('slSpeed');
+const slMix   = document.getElementById('slMix');
 
-        footer {
-            text-align: center; padding: 30px 15px; background: rgba(21, 21, 30, 0.8);
-            border-top: 1px solid rgba(255, 255, 255, 0.05); color: var(--text-muted);
-        }
+function syncSliders(){
+  const p=parseFloat(slPitch.value), s=parseFloat(slSpeed.value), m=parseInt(slMix.value);
+  document.getElementById('vPitch').textContent=(p>=0?'+':'')+p+' st';
+  document.getElementById('vSpeed').textContent=s.toFixed(2)+'×';
+  document.getElementById('vMix').textContent=m+'%';
+  document.getElementById('iv1').textContent=(p>=0?'+':'')+p+'st';
+  document.getElementById('iv2').textContent=s.toFixed(2)+'×';
+  document.getElementById('iv3').textContent=m+'%';
 
-        @media (max-width: 768px) {
-            .hamburger { display: flex; }
-            nav { padding: 15px; }
-            .logo { font-size: 22px; }
-            .nav-links { 
-                position: absolute; top: 60px; right: -100%; flex-direction: column; 
-                background: rgba(15, 15, 25, 0.98); width: 100vw; text-align: center; padding: 20px 0; gap: 15px;
-                border-bottom: 2px solid var(--primary); box-shadow: 0 10px 20px rgba(0,0,0,0.8); transition: 0.4s ease-in-out;
-            }
-            .nav-links.active { right: 0; }
-            .nav-links a { width: 80%; margin: 0 auto; font-size: 1.1rem; }
-            .hero h1 { font-size: 2.2rem; margin-top: 20px; }
-            .hero p { font-size: 1rem; padding: 0 10px; }
-            .ip-banner { padding: 15px; width: 100%; gap: 10px; }
-            .ip-address { font-size: 1rem; }
-        }
-    </style>
-</head>
-<body>
+  // live update gain nodes if running
+  if(isLive && dryGainNode && wetGainNode){
+    const mix=m/100;
+    dryGainNode.gain.setTargetAtTime(1-mix, audioCtx.currentTime, 0.05);
+    wetGainNode.gain.setTargetAtTime(mix,   audioCtx.currentTime, 0.05);
+  }
+}
+slPitch.addEventListener('input', syncSliders);
+slSpeed.addEventListener('input', syncSliders);
+slMix.addEventListener('input',   syncSliders);
+syncSliders();
 
-    <nav>
-        <a href="index.html" class="logo">RGSMT Hosting</a>
-        <div class="hamburger">
-            <span></span><span></span><span></span>
-        </div>
-        <div class="nav-links">
-            <a href="index.html" class="active">Home</a>
-            <a href="plans.html">Plans</a>
-            <a href="page2.html">Features</a>
-            <a href="status.html">Status</a>
-            <a href="https://discord.gg/wsydnfX7Dh" target="_blank" class="discord-btn">Join Discord</a>
-        </div>
-    </nav>
+// ═══════════════════════════════════════════════════════
+//  FILE UPLOAD
+// ═══════════════════════════════════════════════════════
+const dz = document.getElementById('dz');
+const fi = document.getElementById('fileInput');
 
-    <section class="hero">
-        <h1>Next-Gen Minecraft<br>Server Hosting</h1>
-        <p>Unbeatable performance, DDoS protection, and instant setup. Build your community without limits on our extreme-performance nodes.</p>
-        <a href="plans.html" class="btn">View Plans</a>
+dz.addEventListener('dragover', e=>{e.preventDefault();dz.classList.add('drag')});
+dz.addEventListener('dragleave',()=>dz.classList.remove('drag'));
+dz.addEventListener('drop',e=>{
+  e.preventDefault();dz.classList.remove('drag');
+  if(e.dataTransfer.files[0]) loadFile(e.dataTransfer.files[0]);
+});
+fi.addEventListener('change',()=>{ if(fi.files[0]) loadFile(fi.files[0]); });
+document.getElementById('frmBtn').addEventListener('click',e=>{e.stopPropagation();clearFile()});
 
-        <div class="ip-banner">
-            <span>Test our network performance:</span>
-            <div class="ip-address">play.rgsmt.fun:19132</div>
-        </div>
-    </section>
+async function loadFile(file){
+  if(!file.type.startsWith('audio/')){
+    toast('Sirf audio file upload karo!','err'); return;
+  }
+  toast('Loading audio...','warn');
+  try{
+    const ab = await file.arrayBuffer();
+    const tmpCtx = new AudioContext();
+    targetBuffer = await tmpCtx.decodeAudioData(ab);
+    await tmpCtx.close();
 
-    <footer>
-        <p>&copy; 2026 RGSMT Hosting. All rights reserved.</p>
-    </footer>
+    document.getElementById('fname').textContent = file.name;
+    document.getElementById('fmeta').textContent =
+      fmtSize(file.size)+' · '+targetBuffer.duration.toFixed(1)+'s · '+targetBuffer.sampleRate+' Hz';
+    document.getElementById('finfo').classList.add('show');
+    dz.classList.add('loaded');
+    document.getElementById('dzIco').textContent='✅';
+    document.getElementById('dzTtl').textContent='Voice loaded!';
+    document.getElementById('btnNext').disabled=false;
+    setStep(2);
+    toast('Voice file ready!','ok');
+  } catch(e){
+    toast('File decode failed: '+e.message,'err');
+  }
+}
 
-    <script>
-        const hamburger = document.querySelector('.hamburger');
-        const navLinks = document.querySelector('.nav-links');
-        hamburger.addEventListener('click', () => { navLinks.classList.toggle('active'); });
-    </script>
-</body>
+function clearFile(){
+  targetBuffer=null; fi.value='';
+  document.getElementById('finfo').classList.remove('show');
+  dz.classList.remove('loaded');
+  document.getElementById('dzIco').textContent='🎵';
+  document.getElementById('dzTtl').textContent='Yahan audio file drop karo';
+  document.getElementById('btnNext').disabled=true;
+  setStep(1);
+}
+
+function fmtSize(b){
+  if(b<1024) return b+' B';
+  if(b<1048576) return (b/1024).toFixed(1)+' KB';
+  return (b/1048576).toFixed(2)+' MB';
+}
+
+// ═══════════════════════════════════════════════════════
+//  NEXT → GO LIVE SCREEN
+// ═══════════════════════════════════════════════════════
+function goLive(){
+  document.getElementById('uploadSec').style.display='none';
+  document.getElementById('liveSection').classList.add('show');
+  setStep(3);
+  syncSliders();
+  toast('Ready! "Start Live" dabao 🎙','ok');
+}
+
+// ═══════════════════════════════════════════════════════
+//  TOGGLE LIVE
+// ═══════════════════════════════════════════════════════
+async function toggleLive(){
+  if(isLive){ stopLive(); return; }
+  await startLive();
+}
+
+async function startLive(){
+  // ── 1. Get mic (will trigger browser permission popup) ──
+  setMicUI('loading','Mic permission maang raha hai...','Browser popup mein Allow click karo');
+
+  let stream;
+  try{
+    stream = await navigator.mediaDevices.getUserMedia({
+      audio:{
+        echoCancellation:true,
+        noiseSuppression:true,
+        autoGainControl:false,
+        channelCount:1,
+        sampleRate:44100
+      },
+      video:false
+    });
+  } catch(err){
+    const denied = err.name==='NotAllowedError'||err.name==='PermissionDeniedError';
+    setMicUI('','Mic permission nahi mila','Browser mein manually allow karo');
+    document.getElementById('permBanner').classList.toggle('show', denied);
+    document.getElementById('micCard').classList.add('error-state');
+    toast(denied ? 'Permission denied — allow karo ऊपर se' : 'Mic error: '+err.message,'err');
+    return;
+  }
+
+  document.getElementById('permBanner').classList.remove('show');
+  document.getElementById('micCard').classList.remove('error-state');
+  micStream = stream;
+
+  // ── 2. Create AudioContext (must be after user gesture + stream ready) ──
+  audioCtx = new (window.AudioContext||window.webkitAudioContext)({sampleRate:44100});
+
+  // Resume if suspended (needed in some browsers)
+  if(audioCtx.state==='suspended') await audioCtx.resume();
+
+  const src = audioCtx.createMediaStreamSource(micStream);
+
+  // ── 3. Analyser (for visualizer) ──
+  analyserNode = audioCtx.createAnalyser();
+  analyserNode.fftSize = 128;
+  analyserNode.smoothingTimeConstant = 0.75;
+  src.connect(analyserNode);
+
+  // ── 4. Pitch shifting using ScriptProcessor ──
+  //    We implement a simple time-domain pitch shifter (granular resampling)
+  const BUFSIZE = 2048;
+  const pitch  = parseFloat(slPitch.value);
+  const speed  = parseFloat(slSpeed.value);
+  const mix    = parseInt(slMix.value)/100;
+
+  const pitchRatio = Math.pow(2, pitch/12) * speed;
+
+  // Ring buffer
+  const RING = 16384;
+  const ring = new Float32Array(RING);
+  let wPtr = 0;
+  let rPtr = 0.0;
+
+  processorNode = audioCtx.createScriptProcessor(BUFSIZE,1,1);
+  processorNode.onaudioprocess = ev=>{
+    const inp = ev.inputBuffer.getChannelData(0);
+    const out = ev.outputBuffer.getChannelData(0);
+
+    // Write input into ring buffer
+    for(let i=0;i<inp.length;i++){
+      ring[wPtr & (RING-1)] = inp[i];
+      wPtr++;
+    }
+
+    // Read back at pitchRatio speed (resampling = pitch shift)
+    for(let i=0;i<out.length;i++){
+      const ri  = Math.floor(rPtr) & (RING-1);
+      const ri1 = (ri+1) & (RING-1);
+      const frac= rPtr - Math.floor(rPtr);
+      // linear interpolation
+      out[i] = ring[ri]*(1-frac) + ring[ri1]*frac;
+      rPtr += pitchRatio;
+      // keep read pointer from overtaking write pointer
+      if(rPtr > wPtr - BUFSIZE/2) rPtr = wPtr - BUFSIZE;
+      if(rPtr < 0) rPtr = 0;
+    }
+  };
+
+  // ── 5. Gain nodes ──
+  dryGainNode = audioCtx.createGain();
+  dryGainNode.gain.value = 1 - mix;
+
+  wetGainNode = audioCtx.createGain();
+  wetGainNode.gain.value = mix;
+
+  // Dry: original mic → destination (for natural blend)
+  src.connect(dryGainNode);
+  dryGainNode.connect(audioCtx.destination);
+
+  // Wet: mic → shift processor → destination
+  src.connect(processorNode);
+  processorNode.connect(wetGainNode);
+  wetGainNode.connect(audioCtx.destination);
+
+  isLive = true;
+  const ps = pitch>=0?'+':''; 
+  setMicUI('live',
+    '🟢 Live — Awaaz shift ho rahi hai',
+    `Pitch ${ps}${pitch}st · Rate ${speed}× · Mix ${Math.round(mix*100)}%`
+  );
+  document.getElementById('btnLive').textContent='🔴 Stop Live';
+  document.getElementById('btnLive').classList.add('on');
+  document.getElementById('micCard').classList.add('live');
+  startViz();
+  toast('Live shuru! Bolna start karo 🎙','ok');
+}
+
+function stopLive(){
+  if(!isLive) return;
+  isLive=false;
+
+  // stop recording if active
+  stopRec();
+
+  if(processorNode){ processorNode.disconnect(); processorNode=null; }
+  if(dryGainNode)  { dryGainNode.disconnect(); dryGainNode=null; }
+  if(wetGainNode)  { wetGainNode.disconnect(); wetGainNode=null; }
+  if(analyserNode) { analyserNode.disconnect(); analyserNode=null; }
+  if(audioCtx)     { audioCtx.close(); audioCtx=null; }
+  if(micStream)    { micStream.getTracks().forEach(t=>t.stop()); micStream=null; }
+
+  cancelAnimationFrame(animId);
+  bars.forEach(b=>b.style.height='3px');
+
+  setMicUI('','Live band hua','Start Live phir se dabao');
+  document.getElementById('btnLive').textContent='🎙 Start Live';
+  document.getElementById('btnLive').classList.remove('on');
+  document.getElementById('micCard').classList.remove('live');
+  toast('Live band hua','warn');
+}
+
+function stopAll(){ stopLive(); }
+
+function goBack(){
+  stopLive();
+  document.getElementById('liveSection').classList.remove('show');
+  document.getElementById('uploadSec').style.display='block';
+  clearFile();
+  setStep(1);
+}
+
+// ═══════════════════════════════════════════════════════
+//  RECORDING
+// ═══════════════════════════════════════════════════════
+async function toggleRec(){
+  if(isRec){ stopRec(); return; }
+  if(!isLive){ toast('Pehle Start Live karo, phir record!','err'); return; }
+
+  try{
+    // Capture the final mixed output via a destination node
+    const dest = audioCtx.createMediaStreamDestination();
+    if(dryGainNode) dryGainNode.connect(dest);
+    if(wetGainNode) wetGainNode.connect(dest);
+
+    const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
+      ? 'audio/webm;codecs=opus'
+      : MediaRecorder.isTypeSupported('audio/webm')
+      ? 'audio/webm' : '';
+
+    mediaRecorder = new MediaRecorder(dest.stream, mimeType ? {mimeType} : {});
+    recChunks=[];
+    mediaRecorder.ondataavailable=e=>{ if(e.data.size>0) recChunks.push(e.data); };
+    mediaRecorder.onstop=()=>{
+      const blob=new Blob(recChunks,{type:mediaRecorder.mimeType||'audio/webm'});
+      if(recObjectURL) URL.revokeObjectURL(recObjectURL);
+      recObjectURL=URL.createObjectURL(blob);
+      document.getElementById('outAudio').src=recObjectURL;
+      document.getElementById('dlLink').href=recObjectURL;
+      document.getElementById('recOut').classList.add('show');
+      toast('Recording save ho gayi! ✅','ok');
+    };
+    mediaRecorder.start(100);
+    isRec=true;
+    document.getElementById('btnRec').textContent='⏹ Stop Rec';
+    document.getElementById('btnRec').classList.add('on');
+    document.getElementById('mdot').className='mdot rec';
+    toast('Recording shuru...','ok');
+  } catch(e){
+    toast('Record error: '+e.message,'err');
+  }
+}
+
+function stopRec(){
+  if(!isRec) return;
+  isRec=false;
+  if(mediaRecorder && mediaRecorder.state!=='inactive') mediaRecorder.stop();
+  document.getElementById('btnRec').textContent='⏺ Record';
+  document.getElementById('btnRec').classList.remove('on');
+  if(isLive) document.getElementById('mdot').className='mdot live';
+  else       document.getElementById('mdot').className='mdot';
+}
+
+// ═══════════════════════════════════════════════════════
+//  VISUALIZER
+// ═══════════════════════════════════════════════════════
+function startViz(){
+  const data=new Uint8Array(VIZ_N);
+  function frame(){
+    animId=requestAnimationFrame(frame);
+    if(!analyserNode) return;
+    analyserNode.getByteFrequencyData(data);
+    for(let i=0;i<VIZ_N;i++){
+      const h=3+Math.floor((data[i]/255)*72);
+      bars[i].style.height=h+'px';
+    }
+  }
+  frame();
+}
+
+// ═══════════════════════════════════════════════════════
+//  HELPERS
+// ═══════════════════════════════════════════════════════
+function setMicUI(dotState, txt, sub){
+  const dot=document.getElementById('mdot');
+  dot.className='mdot'+(dotState?' '+dotState:'');
+  document.getElementById('micTxt').textContent=txt;
+  document.getElementById('micSub').textContent=sub;
+}
+
+function setStep(n){
+  for(let i=1;i<=3;i++){
+    document.getElementById('s'+i).className=
+      'step'+(i<n?' done':i===n?' active':'');
+  }
+}
+
+let toastTmr;
+function toast(msg,type=''){
+  const el=document.getElementById('toast');
+  el.textContent=msg;
+  el.className='toast show'+(type?' '+type:'');
+  clearTimeout(toastTmr);
+  toastTmr=setTimeout(()=>el.className='toast',3500);
+}
+</script>
+ </body>
 </html>
