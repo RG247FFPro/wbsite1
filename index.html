@@ -3,7 +3,7 @@
  <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lumix AI — Upscale to Perfection</title>
+  <title>Lumix  — Upscale to Perfection</title>
   <style>
   @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500&display=swap');
 
@@ -565,6 +565,16 @@
     transition: color 0.15s;
   }
   .file-remove:hover { color: var(--error); }
+
+.ai-chip{
+  background:rgba(124,106,255,0.15);
+  border:1px solid var(--accent);
+  color:var(--accent2);
+  padding:6px 12px;
+  border-radius:999px;
+  font-size:.8rem;
+}
+
 </style>
  </head>
  <body>
@@ -660,6 +670,15 @@
        <span style="font-size:0.85rem;color:var(--muted)">Restore facial details</span> <label class="toggle"><input type="checkbox" id="imgFace"><span class="slider"></span></label>
       </div>
      </div>
+    </div>
+    <div class="setting-card" id="aiAssistant" style="display:none;margin-top:20px;">
+     <div class="setting-label">AI Photo Assistant</div>
+     <h3 id="sceneType">Analyzing...</h3>
+     <div style="margin-top:12px;">
+      Quality Score: <span id="qualityScore" style="color:var(--accent2);font-weight:700;">0</span>/100
+     </div>
+     <div id="recommendedFilters" style="margin-top:15px;display:flex;gap:8px;flex-wrap:wrap;"></div>
+     <button class="btn-upload" style="margin-top:15px;" onclick="applyBestFilter()">Apply AI Filter</button>
     </div>
     <button class="btn-process" id="imgBtn" disabled onclick="process('image')">Upscale Image →</button>
     <div class="progress-wrap" id="imgProgress">
@@ -884,6 +903,7 @@ function applyFile(file, type) {
     document.getElementById('imgPreview').style.display = 'flex';
     document.getElementById('imgSettings').style.display = 'grid';
     document.getElementById('imgBtn').disabled = false;
+    runAIAnalysis(file);
     document.getElementById('imgResult').classList.remove('visible');
     document.getElementById('imgProgress').classList.remove('visible');
   } else {
@@ -1014,7 +1034,7 @@ function showResult(type) {
   if (isImg) {
     beforeEl.innerHTML = `<img src="${url}" draggable="false">`;
     // For demo: apply CSS upscale + sharpening to simulate enhancement
-    afterEl.innerHTML  = `<img src="${url}" style="filter:contrast(1.06) saturate(1.08)" draggable="false">`;
+    afterEl.innerHTML  = `<img id="enhancedImage" src="${url}" style="filter:contrast(1.15) saturate(1.12) brightness(1.03)" draggable="false">`;
     // Set up download
     setupImgDownload(url, file, mult);
   } else {
@@ -1104,6 +1124,43 @@ function resetPanel(type) {
   document.getElementById(`${prefix}Btn`).disabled = true;
 }
 
+
+let currentAI = null;
+
+function runAIAnalysis(file){
+  const score = Math.floor(Math.random()*25)+75;
+  let scene = "Portrait";
+  let filters = ["Face Enhance","HDR Portrait","Skin Smooth"];
+
+  const n = file.name.toLowerCase();
+  if(n.includes("anime")){scene="Anime";filters=["Anime+","Sharpen","Color Boost"];}
+  else if(n.includes("night")){scene="Night";filters=["Night","Denoise","Sharpen"];}
+  else if(n.includes("landscape")){scene="Landscape";filters=["HDR","Vibrance","Nature Boost"];}
+
+  currentAI = filters[0];
+  document.getElementById("aiAssistant").style.display="block";
+  document.getElementById("sceneType").innerHTML="Detected: "+scene;
+  document.getElementById("qualityScore").innerHTML=score;
+  document.getElementById("recommendedFilters").innerHTML=filters.map(f=>`<span class="ai-chip">${f}</span>`).join('');
+}
+
+function applyBestFilter(){
+  const img = document.getElementById("enhancedImage");
+  if(!img){ showNotif("ℹ️","Process image first"); return; }
+
+  switch(currentAI){
+    case "HDR Portrait":
+      img.style.filter="contrast(1.15) saturate(1.2) brightness(1.05)"; break;
+    case "Anime+":
+      img.style.filter="contrast(1.3) saturate(1.4)"; break;
+    case "Night":
+      img.style.filter="brightness(1.2) contrast(1.2)"; break;
+    default:
+      img.style.filter="contrast(1.15) saturate(1.12) brightness(1.03)";
+  }
+  showNotif("✨","AI Filter Applied");
+}
+
 // ── NOTIFICATION ──
 let notifTimer;
 function showNotif(icon, msg) {
@@ -1116,4 +1173,4 @@ function showNotif(icon, msg) {
 }
 </script>
  </body>
- </html>
+</html>
