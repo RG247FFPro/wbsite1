@@ -1,300 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NEON.LAN — Cyber Cafe</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Chakra+Petch:ital,wght@0,400;0,600;0,700;1,600&family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --void: #05060a;
-    --surface: #0b0f1a;
-    --surface-2: #10162a;
-    --cyan: #4deeea;
-    --magenta: #ff2e97;
-    --purple: #8a4dff;
-    --amber: #ffb347;
-    --text: #e8ecf5;
-    --text-muted: #7c86a3;
-    --line: rgba(77,238,234,0.18);
-  }
-  *{box-sizing:border-box; margin:0; padding:0;}
-  html,body{height:100%; background:var(--void); overflow:hidden;}
-  body{
-    font-family:'Rajdhani', sans-serif;
-    color:var(--text);
-    position:relative;
-    width:100vw; height:100vh;
-    -webkit-font-smoothing:antialiased;
-  }
-
-  .scene{
-    position:fixed; inset:0;
-    background:
-      radial-gradient(ellipse at 50% 15%, rgba(138,77,255,0.25), transparent 55%),
-      radial-gradient(ellipse at 15% 85%, rgba(255,46,151,0.16), transparent 50%),
-      radial-gradient(ellipse at 85% 85%, rgba(77,238,234,0.16), transparent 50%),
-      linear-gradient(180deg, #05060a 0%, #070a14 55%, #0a0e1c 100%);
-    overflow:hidden;
-  }
-  .grid-floor{
-    position:absolute; left:0; right:0; bottom:0; height:46%;
-    background-image:
-      linear-gradient(var(--line) 1px, transparent 1px),
-      linear-gradient(90deg, var(--line) 1px, transparent 1px);
-    background-size: 60px 40px;
-    transform: perspective(400px) rotateX(62deg);
-    transform-origin:bottom;
-    animation: floorScroll 6s linear infinite;
-    opacity:0.55;
-  }
-  @keyframes floorScroll{ from{background-position:0 0;} to{background-position:0 40px;} }
-
-  .dust{ position:absolute; inset:0; pointer-events:none; }
-  .dust span{
-    position:absolute; width:2px; height:2px; border-radius:50%;
-    background:var(--cyan); opacity:0.5;
-    animation: drift linear infinite;
-  }
-  @keyframes drift{
-    from{ transform:translateY(0); opacity:0; }
-    10%{ opacity:0.6; }
-    to{ transform:translateY(-110vh); opacity:0; }
-  }
-
-  .rig-row{
-    position:absolute; bottom:0; left:0; right:0;
-    display:flex; justify-content:center; align-items:flex-end;
-    gap:18px; padding-bottom:0;
-  }
-  .rig{
-    width:70px; height:64px;
-    background:linear-gradient(180deg, #12172a, #090b14);
-    border:1px solid rgba(255,255,255,0.06);
-    border-radius:6px 6px 0 0;
-    position:relative;
-    box-shadow: 0 -6px 24px -4px var(--glow, rgba(77,238,234,0.35));
-  }
-  .rig::before{
-    content:''; position:absolute; inset:8px 8px auto 8px; height:34px;
-    background:var(--glow, #4deeea);
-    border-radius:3px;
-    filter:blur(0.2px);
-    animation: flicker 3.4s ease-in-out infinite;
-    opacity:0.85;
-  }
-  @keyframes flicker{
-    0%,100%{ opacity:0.55; } 45%{ opacity:0.95; } 60%{ opacity:0.5; } 80%{ opacity:0.85; }
-  }
-  .rig:nth-child(1){ height:52px; } .rig:nth-child(1){ --glow:#8a4dff; }
-  .rig:nth-child(2){ height:68px; } .rig:nth-child(2){ --glow:#4deeea; }
-  .rig:nth-child(3){ height:58px; } .rig:nth-child(3){ --glow:#ff2e97; }
-  .rig:nth-child(4){ height:72px; } .rig:nth-child(4){ --glow:#ffb347; }
-  .rig:nth-child(5){ height:56px; } .rig:nth-child(5){ --glow:#4deeea; }
-  .rig:nth-child(6){ height:66px; } .rig:nth-child(6){ --glow:#8a4dff; }
-  .rig:nth-child(7){ height:50px; } .rig:nth-child(7){ --glow:#ff2e97; }
-
-  .scanlines{
-    position:fixed; inset:0; pointer-events:none; mix-blend-mode:overlay;
-    background:repeating-linear-gradient(180deg, rgba(255,255,255,0.035) 0px, rgba(255,255,255,0.035) 1px, transparent 1px, transparent 3px);
-    opacity:0.5;
-  }
-  .vignette{
-    position:fixed; inset:0; pointer-events:none;
-    background:radial-gradient(ellipse at 50% 50%, transparent 45%, rgba(0,0,0,0.65) 100%);
-  }
-
-  #boot{
-    position:fixed; inset:0; z-index:50;
-    background:#020304;
-    color:#7dffb0;
-    font-family:'JetBrains Mono', monospace;
-    display:flex; flex-direction:column; align-items:flex-start; justify-content:center;
-    padding:8vw;
-    transition: opacity 0.6s ease, filter 0.6s ease;
-  }
-  #boot.hide{ opacity:0; filter:brightness(3); pointer-events:none; }
-  #boot .line{ font-size:14px; line-height:1.9; opacity:0; white-space:pre; }
-  #boot .line.show{ opacity:1; }
-  #boot .cursor{ display:inline-block; width:8px; height:14px; background:#7dffb0; animation:blink 1s step-end infinite; vertical-align:-2px; }
-  @keyframes blink{ 50%{ opacity:0; } }
-  #enter-btn{
-    margin-top:28px;
-    font-family:'Press Start 2P', monospace;
-    font-size:11px;
-    color:#020304;
-    background:var(--amber);
-    border:none;
-    padding:16px 24px;
-    letter-spacing:1px;
-    cursor:pointer;
-    opacity:0;
-    box-shadow:0 0 0 2px #020304, 0 0 24px rgba(255,179,71,0.6);
-    animation: pulseBtn 1.6s ease-in-out infinite;
-  }
-  #enter-btn.show{ opacity:1; }
-  @keyframes pulseBtn{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.04); } }
-
-  #app{ position:fixed; inset:0; z-index:10; display:none; }
-  #app.show{ display:block; }
-
-  .hud{
-    position:absolute; z-index:20;
-    background:rgba(10,13,24,0.72);
-    border:1px solid rgba(77,238,234,0.25);
-    border-radius:10px;
-    backdrop-filter: blur(6px);
-    padding:14px 16px;
-  }
-
-  #now-playing{ top:22px; left:22px; width:280px; }
-  .np-eyebrow{ font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:2px; color:var(--cyan); text-transform:uppercase; display:flex; align-items:center; gap:8px;}
-  .np-eyebrow .rec{ width:7px; height:7px; border-radius:50%; background:var(--magenta); box-shadow:0 0 8px var(--magenta); animation:blink 1.4s step-end infinite; }
-  #np-title{ font-family:'Chakra Petch', sans-serif; font-weight:700; font-size:19px; margin-top:6px; line-height:1.15; }
-  #np-artist{ color:var(--text-muted); font-size:14px; margin-top:2px; }
-  .np-meta{ display:flex; align-items:center; gap:10px; margin-top:10px; }
-  #np-year{ font-family:'JetBrains Mono', monospace; font-size:11px; color:var(--amber); border:1px solid rgba(255,179,71,0.4); padding:2px 8px; border-radius:20px; }
-  .eq{ display:flex; align-items:flex-end; gap:3px; height:16px; }
-  .eq span{ width:3px; background:var(--cyan); border-radius:2px; animation:bounce 1s ease-in-out infinite; }
-  .eq span:nth-child(1){ animation-delay:0s; } .eq span:nth-child(2){ animation-delay:0.15s; }
-  .eq span:nth-child(3){ animation-delay:0.3s; } .eq span:nth-child(4){ animation-delay:0.45s; }
-  @keyframes bounce{ 0%,100%{ height:3px; } 50%{ height:15px; } }
-
-  .np-controls{ display:flex; gap:8px; margin-top:14px; }
-  .btn{
-    font-family:'Chakra Petch', sans-serif; font-weight:600; font-size:13px;
-    background:rgba(255,255,255,0.04); color:var(--text);
-    border:1px solid rgba(255,255,255,0.14); border-radius:7px;
-    padding:8px 12px; cursor:pointer; display:flex; align-items:center; gap:6px;
-    transition:.15s ease;
-  }
-  .btn:hover{ border-color:var(--cyan); color:var(--cyan); background:rgba(77,238,234,0.08); }
-  .btn:active{ transform:scale(0.96); }
-  #vol{ width:70px; accent-color:var(--cyan); }
-
-  #online{ top:22px; right:22px; display:flex; align-items:center; gap:10px; }
-  .dot-wrap{ position:relative; width:10px; height:10px; }
-  .dot-wrap .dot{ width:10px; height:10px; border-radius:50%; background:#4dff88; box-shadow:0 0 8px #4dff88; }
-  .dot-wrap .ring{ position:absolute; inset:-4px; border-radius:50%; border:1px solid #4dff88; animation:ripple 1.8s ease-out infinite; }
-  @keyframes ripple{ 0%{ transform:scale(0.6); opacity:0.9;} 100%{ transform:scale(2.1); opacity:0;} }
-  #online-count{ font-family:'JetBrains Mono', monospace; font-weight:700; font-size:16px; }
-  #online .lbl{ font-size:11.5px; color:var(--text-muted); letter-spacing:0.5px; }
-
-  .brand{
-    position:absolute; top:50%; left:50%; transform:translate(-50%,-58%);
-    text-align:center; z-index:15; pointer-events:none;
-  }
-  .brand h1{
-    font-family:'Chakra Petch', sans-serif; font-style:italic; font-weight:700;
-    font-size:clamp(38px, 8vw, 84px); letter-spacing:2px;
-    background:linear-gradient(90deg, var(--cyan), var(--purple) 50%, var(--magenta));
-    -webkit-background-clip:text; background-clip:text; color:transparent;
-    text-shadow:0 0 40px rgba(138,77,255,0.35);
-  }
-  .brand p{
-    font-family:'JetBrains Mono', monospace; color:var(--text-muted);
-    font-size:12.5px; letter-spacing:4px; margin-top:6px; text-transform:uppercase;
-  }
-
-  .ticker{
-    position:absolute; bottom:0; left:0; right:0; z-index:20;
-    background:rgba(5,6,10,0.75); border-top:1px solid rgba(77,238,234,0.2);
-    overflow:hidden; white-space:nowrap; padding:9px 0;
-  }
-  .ticker span{
-    display:inline-block; padding-left:100%;
-    animation:scrollTicker 26s linear infinite;
-    font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--text-muted); letter-spacing:1px;
-  }
-  @keyframes scrollTicker{ from{ transform:translateX(0);} to{ transform:translateX(-100%);} }
-
-  #setup-toggle{
-    position:absolute; bottom:46px; right:18px; z-index:25;
-    width:34px; height:34px; border-radius:50%;
-    background:rgba(10,13,24,0.75); border:1px solid rgba(255,255,255,0.15);
-    color:var(--text-muted); font-family:'JetBrains Mono', monospace; font-size:15px;
-    cursor:pointer; display:flex; align-items:center; justify-content:center;
-  }
-  #setup-toggle:hover{ color:var(--cyan); border-color:var(--cyan); }
-  #setup-panel{
-    position:absolute; bottom:88px; right:18px; z-index:25; width:300px;
-    display:none; font-size:13px; line-height:1.6; color:var(--text-muted);
-  }
-  #setup-panel.show{ display:block; }
-  #setup-panel code{ color:var(--cyan); font-family:'JetBrains Mono', monospace; font-size:11.5px; }
-  #setup-panel h3{ font-family:'Chakra Petch', sans-serif; color:var(--text); font-size:14px; margin-bottom:6px; }
-
-  @media (max-width:640px){
-    #now-playing{ width:220px; padding:12px; }
-    #np-title{ font-size:16px; }
-    .brand p{ letter-spacing:2px; font-size:10.5px; }
-  }
-</style>
-</head>
-<body>
-
-<div class="scene">
-  <div class="grid-floor"></div>
-  <div class="dust" id="dust"></div>
-  <div class="rig-row">
-    <div class="rig"></div><div class="rig"></div><div class="rig"></div><div class="rig"></div>
-    <div class="rig"></div><div class="rig"></div><div class="rig"></div>
-  </div>
-</div>
-<div class="scanlines"></div>
-<div class="vignette"></div>
-
-<div id="boot">
-  <div class="line" id="l1">&gt; INITIALIZING CAFE_OS v2.0...</div>
-  <div class="line" id="l2">&gt; LOADING PLAYLIST [2015&#8211;2020]...</div>
-  <div class="line" id="l3">&gt; CONNECTING TO LAN NODE...<span class="cursor"></span></div>
-  <button id="enter-btn">PRESS ENTER TO JACK IN</button>
-</div>
-
-<div id="app">
-  <div class="brand">
-    <h1>NEON.LAN</h1>
-    <p>cyber cafe &middot; open 24/7 &middot; no search, just vibes</p>
-  </div>
-
-  <div class="hud" id="now-playing">
-    <div class="np-eyebrow"><span class="rec"></span>now playing</div>
-    <div id="np-title">&mdash;</div>
-    <div id="np-artist">&mdash;</div>
-    <div class="np-meta">
-      <span id="np-year">----</span>
-      <div class="eq"><span></span><span></span><span></span><span></span></div>
-    </div>
-    <div class="np-controls">
-      <button class="btn" id="shuffle-btn">&#8635; shuffle</button>
-      <button class="btn" id="mute-btn">&#128266;</button>
-      <input type="range" id="vol" min="0" max="1" step="0.01" value="0.5">
-    </div>
-  </div>
-
-  <div class="hud" id="online">
-    <div class="dot-wrap"><div class="ring"></div><div class="dot"></div></div>
-    <div>
-      <div id="online-count">1</div>
-      <div class="lbl">online now</div>
-    </div>
-  </div>
-
-  <button id="setup-toggle" title="playlist setup">&#9881;</button>
-  <div class="hud" id="setup-panel">
-    <h3>add your own tracks</h3>
-    open this file and edit the <code>SONGS</code> array near the bottom of the script &mdash;
-    set a <code>src</code> to an mp3 url you have the rights to use (your own upload, a
-    royalty-free track, or a licensed file). leave <code>src</code> empty and the cafe
-    plays a generated chiptune placeholder instead. no search box on purpose &mdash;
-    it's meant to just start playing.
-  </div>
-
-  <div class="ticker"><span>NOW SERVING PLAYER 1 &nbsp;&#9679;&nbsp; FREE REFILLS ON ENERGY DRINKS &nbsp;&#9679;&nbsp; LAN TOURNAMENT FRIDAYS &nbsp;&#9679;&nbsp; NEW RIGS INSTALLED &nbsp;&#9679;&nbsp; NOW SERVING PLAYER 1 &nbsp;&#9679;&nbsp; FREE REFILLS ON ENERGY DRINKS &nbsp;&#9679;&nbsp; LAN TOURNAMENT FRIDAYS &nbsp;&#9679;&nbsp; </span></div>
-</div>
-
 <script>
 (function(){
   const dust = document.getElementById('dust');
@@ -314,13 +17,44 @@ lines.forEach((id,i)=>{
 });
 setTimeout(()=>{ document.getElementById('enter-btn').classList.add('show'); }, 450*(lines.length+1));
 
+// Updated playlist with copyright-free Hindi audio assets & custom synth scales (Bhairavi & Raag modes)
 const SONGS = [
-  { title:"Neon Overdrive",   artist:"Add your artist", year:"2016", src:"", scale:[0,2,4,7,9],    tempo:150, wave:'square'   },
-  { title:"Static Bloom",     artist:"Add your artist", year:"2018", src:"", scale:[0,3,5,7,10],   tempo:128, wave:'sawtooth' },
-  { title:"LAN Party Anthem", artist:"Add your artist", year:"2015", src:"", scale:[0,2,3,7,8],    tempo:174, wave:'triangle' },
-  { title:"Respawn",          artist:"Add your artist", year:"2019", src:"", scale:[0,2,4,5,7,9,11],tempo:140, wave:'square'  },
-  { title:"Afterglow",        artist:"Add your artist", year:"2020", src:"", scale:[0,2,4,7,9],    tempo:100, wave:'sine'     },
-  { title:"Critical Hit",     artist:"Add your artist", year:"2017", src:"", scale:[0,1,4,5,7,8,11],tempo:160, wave:'sawtooth'}
+  { 
+    title: "Raag Bhairavi Synth",   
+    artist: "Copyright Free / NCS", 
+    year: "2021", 
+    src: "https://upload.wikimedia.org/wikipedia/commons/2/23/Sitar_sound_sample.ogg", 
+    scale: [0, 1, 3, 5, 7, 8, 10], // Bhairavi Thaat
+    tempo: 130, 
+    wave: 'sawtooth'   
+  },
+  { 
+    title: "Desi Cyber Beats",     
+    artist: "Royalty Free Audio", 
+    year: "2022", 
+    src: "https://upload.wikimedia.org/wikipedia/commons/5/5b/Sitar_and_tabla.ogg", 
+    scale: [0, 2, 4, 6, 7, 9, 11], // Yaman Thaat
+    tempo: 124, 
+    wave: 'triangle' 
+  },
+  { 
+    title: "Midnight Mirage", 
+    artist: "NCS Desi Chill", 
+    year: "2020", 
+    src: "", 
+    scale: [0, 1, 4, 5, 7, 8, 11], // Bhairav Mode
+    tempo: 110, 
+    wave: 'sine' 
+  },
+  { 
+    title: "Neon Shehnai Drift",     
+    artist: "Free Synth India", 
+    year: "2023", 
+    src: "", 
+    scale: [0, 2, 3, 5, 7, 8, 10], // Kafi Mode
+    tempo: 140, 
+    wave: 'square'
+  }
 ];
 
 let audioEl = null;
@@ -447,5 +181,3 @@ function startPresence(){
   countTimer = setInterval(refreshCount, 6000);
 }
 </script>
-</body>
-  </html>
